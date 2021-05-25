@@ -1,0 +1,47 @@
+- name: Configuring webserver
+  hosts: tag_Name_webserver
+  tasks:
+    - name: Installing httpd
+      package:
+        name: "httpd"
+        state: present
+    - name: Installing php
+      package:
+        name: "php"
+        state: present
+
+    - name: Copy webpage
+      template:
+        dest: "/var/www/html/index.php"
+        src: "test.php"
+
+    - name: Start httpd service
+      service:
+        name: "httpd"
+        state: started
+  ignore_errors: True
+- name: Configureing loadbalancer
+  hosts: tag_Name_loadbalancer
+  tasks:
+    - name: Install haproxy
+      package:
+        name: "haproxy"
+        state: present
+
+    - name: Copy conf file
+      template:
+        dest: "/etc/haproxy/haproxy.cfg"
+        src: "haproxy.cfg.j2"
+      notify:
+      - Restart haproxy
+
+    - name: Start haproxy service
+      service:
+        name: "haproxy"
+        state: started
+
+  handlers:
+    - name: Restart haproxy
+      service:
+        name: "haproxy"
+        state: restarted
