@@ -1,0 +1,10 @@
+- name: ec2 playbook
+  import_playbook: ec2.yml
+
+- hosts: localhost
+  tasks:
+  - name: Refresh inventory to ensure new instances exist in inventory
+    meta: refresh_inventory
+
+- name: webserver and loadbalancer playbook
+  import_playbook: weblb.yml
